@@ -1,0 +1,25 @@
+# 是否开启调试模式
+Debug: true
+
+# Redis配置
+Redis:
+  Network: "tcp"
+  Server: "localhost"
+  Port: 6379
+  Pass: ""
+  Dbname: 0
+
+# 数据库配置
+Database:
+  Drive: "mysql"
+  User: "root"
+  Pass: "Aa123098.."
+  Dbname: "basic"
+  Network: "tcp"
+  Server: "localhost"
+  Port: 3306
+
+# 日志配置
+Logs:
+  OutputPaths:
+    - "stdout"
