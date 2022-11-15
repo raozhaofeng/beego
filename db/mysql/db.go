@@ -21,6 +21,11 @@ type Db struct {
 	offsetLimitStr string   // 限制行数语句
 }
 
+// NewDb 新的Db操作
+func NewDb(tx *sql.Tx, db *sql.DB) define.Db {
+	return &Db{tx: tx, db: db}
+}
+
 // Table 设置表名
 func (c *Db) Table(name string) define.Db {
 	c.name = name

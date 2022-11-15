@@ -1,7 +1,6 @@
 package beego
 
 import (
-	"database/sql"
 	"github.com/gomodule/redigo/redis"
 	"github.com/raozhaofeng/beego/db"
 	"github.com/raozhaofeng/beego/db/define"
@@ -14,7 +13,6 @@ var (
 	Conf           *Config     //	配置文件
 	Logger         *zap.Logger //	日志对象
 	RedisManager   *redis.Pool //	缓存配置
-	DbManager      *sql.DB     //	数据库管理
 	LocalesManager *Locales    //	本地语言管理
 )
 
@@ -28,7 +26,8 @@ func NewBeeGo(confPath string) *BeeGo {
 	Conf = conf
 	Logger = InitializationLogger(conf.Logs.OutputPaths, conf.Debug)
 	RedisManager = InitializationConnPool(conf.Redis)
-	DbManager = db.InitializationDb(conf.Database)
+	//	初始化数据库
+	db.InitializationDb(conf.Database)
 
 	//	启动服务
 	return &BeeGo{
