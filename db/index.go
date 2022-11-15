@@ -14,12 +14,17 @@ type Pool struct {
 	db *sql.DB
 }
 
-// NewDb 新建Db
-func (c *Pool) NewDb(tx *sql.Tx) define.Db {
+// NewInterfaceDb 创建新的接口Db
+func (c *Pool) NewInterfaceDb(tx *sql.Tx) define.Db {
 	if tx == nil {
 		return mysql.NewDb(tx, c.db)
 	}
 	return mysql.NewDb(tx, nil)
+}
+
+// GetDb 获取Db
+func (c *Pool) GetDb() *sql.DB {
+	return c.db
 }
 
 // GetTx 获取Tx
