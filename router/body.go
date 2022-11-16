@@ -30,6 +30,21 @@ func GetBody(r *http.Request) string {
 	return string(bodyBytes)
 }
 
+// ReadJSON 读取 Json Body
+func ReadJSON(r *http.Request, data interface{}) error {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	//	保存数据到结构体
+	if err = json.Unmarshal(body, data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // FormatJSON JSON格式数据
 type FormatJSON struct {
 	Code int         `json:"code"`
