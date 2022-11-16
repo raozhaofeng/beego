@@ -1,9 +1,20 @@
 package router
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 )
+
+// GetBody 获取body数据
+func GetBody(r *http.Request) string {
+	bodyBytes, _ := ioutil.ReadAll(r.Body)
+	_ = r.Body.Close()
+
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+	return string(bodyBytes)
+}
 
 // FormatJSON JSON格式数据
 type FormatJSON struct {

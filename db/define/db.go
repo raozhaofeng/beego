@@ -49,10 +49,20 @@ type Db interface {
 	OrWhere(str string, arg ...any) Db
 	// Join 连接操作
 	Join(opt, name, on string) Db
+	// LeftJoin 左连接
+	LeftJoin(str, on string) Db
+	// InnerJoin 内连接
+	InnerJoin(str, on string) Db
+	// RightJoin 右连接
+	RightJoin(str, on string) Db
 	// OrderBy 排序
 	OrderBy(orderBy ...string) Db
 	// GroupBy 分组
 	GroupBy(groupBy ...string) Db
 	// OffsetLimit 限制行数
 	OffsetLimit(offset, limit int64) Db
+	// GetTx 获取Tx
+	GetTx() *sql.Tx
+	// GetDb 获取Db
+	GetDb() *sql.DB
 }

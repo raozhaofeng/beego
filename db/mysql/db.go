@@ -163,8 +163,26 @@ func (c *Db) OrWhere(str string, arg ...any) define.Db {
 }
 
 // Join 连接操作
-func (c *Db) Join(opt, name, on string) define.Db {
-	c.joinStr += " " + opt + " " + name + " ON " + on
+func (c *Db) Join(opt, str, on string) define.Db {
+	c.joinStr += " " + opt + " " + str + " ON " + on
+	return c
+}
+
+// LeftJoin 左连接
+func (c *Db) LeftJoin(str, on string) define.Db {
+	c.Join("LEFT JOIN", str, on)
+	return c
+}
+
+// InnerJoin 内连接
+func (c *Db) InnerJoin(str, on string) define.Db {
+	c.Join("INNER JOIN", str, on)
+	return c
+}
+
+// RightJoin 右连接
+func (c *Db) RightJoin(str, on string) define.Db {
+	c.Join("RIGHT JOIN", str, on)
 	return c
 }
 
@@ -192,9 +210,12 @@ func (c *Db) Insert() (int64, error) {
 	s += strings.Join(c.fields, ",")
 
 	//	补齐问号
-	for _, _ = range c.fields {
-		c.values = append(c.values, "?")
+	if len(c.fields) == 0 {
+		for _, _ = range c.fields {
+			c.values = append(c.values, "?")
+		}
 	}
+
 	s += ") VALUES(" + strings.Join(c.values, ",") + ")"
 	result, err := c.SqlExec(s, c.args)
 	if err != nil {
@@ -235,6 +256,16 @@ func (c *Db) SqlExec(s string, args []any) (sql.Result, error) {
 		return c.tx.Exec(s, args...)
 	}
 	return c.db.Exec(s, args...)
+}
+
+// GetTx 获取Tx
+func (c *Db) GetTx() *sql.Tx {
+	return c.tx
+}
+
+// GetDb 获取Db
+func (c *Db) GetDb() *sql.DB {
+	return c.db
 }
 
 // combineWhere 组合where条件
