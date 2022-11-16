@@ -144,21 +144,24 @@ func (c *Db) Where(opt string, str string, arg ...any) define.Db {
 		opt = " " + opt + " "
 	}
 	c.whereStr += opt + str
-	if arg != nil {
-		c.args = append(c.args, arg...)
+
+	for i := 0; i < len(arg); i++ {
+		if arg[i] != nil {
+			c.args = append(c.args, arg[i])
+		}
 	}
 	return c
 }
 
 // AndWhere 条件语句
 func (c *Db) AndWhere(str string, arg ...any) define.Db {
-	c.Where("AND", str, arg)
+	c.Where("AND", str, arg...)
 	return c
 }
 
 // OrWhere 并且条件语句
 func (c *Db) OrWhere(str string, arg ...any) define.Db {
-	c.Where("OR", str, arg)
+	c.Where("OR", str, arg...)
 	return c
 }
 
@@ -284,9 +287,7 @@ func (c *Db) combineSql() string {
 		s += " " + c.joinStr
 	}
 
-	if c.whereStr != "" {
-		s += " " + c.whereStr
-	}
+	s += c.combineWhere()
 
 	if c.groupByStr != "" {
 		s += " " + c.groupByStr
