@@ -38,6 +38,12 @@ type FormatJSON struct {
 	Data interface{} `json:"data"`
 }
 
+// IndexData 列表数据
+type IndexData struct {
+	Items interface{} `json:"items"`
+	Count int64       `json:"count"`
+}
+
 // SuccessJSON 返回成功数据
 func SuccessJSON(w http.ResponseWriter, data interface{}) {
 	w.WriteHeader(http.StatusOK)
