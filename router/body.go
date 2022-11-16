@@ -7,6 +7,20 @@ import (
 	"net/http"
 )
 
+// RangeTimeParam 时间范围参数
+type RangeTimeParam struct {
+	Form string `json:"form"` //	开始时间
+	To   string `json:"to"`   //	结束时间
+}
+
+// Pagination 分页
+type Pagination struct {
+	SortBy      string `json:"sortBy"`      //	排序字段
+	Descending  bool   `json:"descending"`  //	是否降序排序
+	Page        int64  `json:"page"`        //	当前页数
+	RowsPerPage int64  `json:"rowsPerPage"` //	每页显示条数
+}
+
 // GetBody 获取body数据
 func GetBody(r *http.Request) string {
 	bodyBytes, _ := ioutil.ReadAll(r.Body)

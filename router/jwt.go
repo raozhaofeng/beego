@@ -5,6 +5,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/raozhaofeng/beego/utils"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -60,12 +61,12 @@ func (c *Token) Verify(rds redis.Conn, r *http.Request) *Claims {
 
 	//	判断是否白名单
 	userRealIP := utils.GetUserRealIP(r)
-	if len(tokenParams.Whitelist) > 0 && utils.SliceStringIndexOf(userRealIP, tokenParams.Whitelist) == -1 {
+	if tokenParams.Whitelist != "" && utils.SliceStringIndexOf(userRealIP, strings.Split(tokenParams.Whitelist, ",")) == -1 {
 		return nil
 	}
 
 	//	判断是否黑名单
-	if len(tokenParams.Blacklist) > 0 && utils.SliceStringIndexOf(userRealIP, tokenParams.Blacklist) > -1 {
+	if tokenParams.Blacklist != "" && utils.SliceStringIndexOf(userRealIP, strings.Split(tokenParams.Blacklist, ",")) > -1 {
 		return nil
 	}
 

@@ -32,11 +32,11 @@ type Claims struct {
 
 // TokenParams Token 参数
 type TokenParams struct {
-	Key       string        //	密钥
-	Only      bool          //	是否唯一
-	Expire    time.Duration //	过期时间
-	Whitelist []string      //	白名单
-	Blacklist []string      //	黑名单
+	Key       string        `json:"key"`       //	密钥
+	Only      bool          `json:"only"`      //	是否唯一
+	Expire    time.Duration `json:"expire"`    //	过期时间
+	Whitelist string        `json:"whitelist"` //	白名单
+	Blacklist string        `json:"blacklist"` //	黑名单
 }
 
 type Token struct {

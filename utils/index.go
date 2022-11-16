@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/md5"
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -29,4 +31,15 @@ func GetUserRealIP(r *http.Request) string {
 		return ip
 	}
 	return "0.0.0.0"
+}
+
+// PasswordEncrypt 密码加密
+func PasswordEncrypt(password string) string {
+	if password == "" {
+		return ""
+	}
+
+	has1 := md5.Sum([]byte(password))
+	has2 := md5.Sum([]byte(fmt.Sprintf("%x", has1)))
+	return fmt.Sprintf("%x", has2)
 }
