@@ -84,6 +84,11 @@ func (c *Token) SetTokenValue(rds redis.Conn, adminId, userId int64, tokenStr st
 	_, _ = rds.Do("HSET", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId), tokenStr)
 }
 
+// DelTokenValue 删除Token值
+func (c *Token) DelTokenValue(rds redis.Conn, adminId, userId int64) {
+	_, _ = rds.Do("HDEL", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId))
+}
+
 // GetTokenAdminRolesRouter 获取管理角色路由列表
 func (c *Token) GetTokenAdminRolesRouter(rds redis.Conn, adminId int64) []string {
 	adminRolesRouter, err := redis.String(rds.Do("HGET", TokenAdminRolesRouterName, adminId))
