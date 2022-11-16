@@ -42,13 +42,17 @@ type Db interface {
 	// Args 设置替换字符值[插入|更新|查询｜删除] Args(100, "0,1")
 	Args(args ...any) Db
 	// Where 条件语句
-	Where(opt string, val string, arg any) Db
+	Where(opt string, str string, arg ...any) Db
+	// AndWhere 条件语句
+	AndWhere(str string, arg ...any) Db
+	// OrWhere 并且条件语句
+	OrWhere(str string, arg ...any) Db
 	// Join 连接操作
 	Join(opt, name, on string) Db
 	// OrderBy 排序
-	OrderBy(orderList []string) Db
+	OrderBy(orderBy ...string) Db
 	// GroupBy 分组
-	GroupBy(groupList []string) Db
+	GroupBy(groupBy ...string) Db
 	// OffsetLimit 限制行数
 	OffsetLimit(offset, limit int64) Db
 }

@@ -137,16 +137,28 @@ func (c *Db) Args(arg ...any) define.Db {
 }
 
 // Where 条件
-func (c *Db) Where(opt string, val string, arg any) define.Db {
+func (c *Db) Where(opt string, str string, arg ...any) define.Db {
 	if c.whereStr == "" {
 		opt = ""
 	} else {
 		opt = " " + opt + " "
 	}
-	c.whereStr += opt + val
+	c.whereStr += opt + str
 	if arg != nil {
-		c.args = append(c.args, arg)
+		c.args = append(c.args, arg...)
 	}
+	return c
+}
+
+// AndWhere 条件语句
+func (c *Db) AndWhere(str string, arg ...any) define.Db {
+	c.Where("AND", str, arg)
+	return c
+}
+
+// OrWhere 并且条件语句
+func (c *Db) OrWhere(str string, arg ...any) define.Db {
+	c.Where("OR", str, arg)
 	return c
 }
 
@@ -157,14 +169,14 @@ func (c *Db) Join(opt, name, on string) define.Db {
 }
 
 // OrderBy 排序操作
-func (c *Db) OrderBy(orderList []string) define.Db {
-	c.orderByStr = " ORDER BY " + strings.Join(orderList, ",")
+func (c *Db) OrderBy(orderBy ...string) define.Db {
+	c.orderByStr = " ORDER BY " + strings.Join(orderBy, ",")
 	return c
 }
 
 // GroupBy 分组操作
-func (c *Db) GroupBy(groupList []string) define.Db {
-	c.groupByStr = " GROUP BY " + strings.Join(groupList, ",")
+func (c *Db) GroupBy(groupBy ...string) define.Db {
+	c.groupByStr = " GROUP BY " + strings.Join(groupBy, ",")
 	return c
 }
 
