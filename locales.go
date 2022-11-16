@@ -28,6 +28,11 @@ func (c *Locales) SetAdminLocalesAll(rds redis.Conn, adminId int64, locales map[
 	}
 }
 
+// SetAdminLocales 设置管理语言
+func (c *Locales) SetAdminLocales(rds redis.Conn, adminId int64, localeKey string, localVal any) {
+	_, _ = rds.Do("HSET", c.LocalesRedisName(adminId), localeKey, localVal)
+}
+
 // GetAdminLocales 获取管理语言值
 func (c *Locales) GetAdminLocales(rds redis.Conn, adminId int64, localeKey string) string {
 	data, err := redis.String(rds.Do("HGET", c.LocalesRedisName(adminId), localeKey))
