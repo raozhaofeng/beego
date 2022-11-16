@@ -36,7 +36,7 @@ func NewBeeGo(confPath string) *BeeGo {
 }
 
 // InitializationLocales 初始化语言
-func (c *BeeGo) InitializationLocales(localesList map[int64]map[string]string) *BeeGo {
+func (c *BeeGo) InitializationLocales(localesList map[int64]map[string]map[string]string) *BeeGo {
 	rds := RedisManager.Get()
 	defer rds.Close()
 

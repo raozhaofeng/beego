@@ -20,8 +20,8 @@ func NewTest(tx *sql.Tx) *Test {
 }
 
 func main() {
-	app := beego.NewBeeGo("./").InitializationLocales(map[int64]map[string]string{
-		1: {"name": "名称"},
+	app := beego.NewBeeGo("./").InitializationLocales(map[int64]map[string]map[string]string{
+		1: {"zh-CN": {"name": "名称"}},
 	})
 
 	//	日志回调方法
