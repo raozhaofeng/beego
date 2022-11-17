@@ -213,13 +213,14 @@ func (c *Db) Insert() (int64, error) {
 	s += strings.Join(c.fields, ",")
 
 	//	补齐问号
-	if len(c.fields) == 0 {
+	if len(c.values) == 0 {
 		for _, _ = range c.fields {
 			c.values = append(c.values, "?")
 		}
 	}
 
 	s += ") VALUES(" + strings.Join(c.values, ",") + ")"
+
 	result, err := c.SqlExec(s, c.args)
 	if err != nil {
 		return 0, err

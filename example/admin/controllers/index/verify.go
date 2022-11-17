@@ -14,7 +14,7 @@ func Verify(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	rds := beego.RedisManager.Get()
 	defer rds.Close()
 
-	fmt.Println(beego.LocalesManager.GetAdminLocales(rds, claims.AdminId, "name"))
+	fmt.Println(beego.LocalesManager.GetAdminLocales(rds, claims.AdminId, "zh-CN", "name"))
 
 	router.SuccessJSON(w, claims)
 }

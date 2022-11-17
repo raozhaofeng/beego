@@ -9,6 +9,7 @@ import (
 	"github.com/raozhaofeng/beego/example/admin"
 	"github.com/raozhaofeng/beego/router"
 	"net/http"
+	"time"
 )
 
 type Test struct {
@@ -16,7 +17,7 @@ type Test struct {
 }
 
 func NewTest(tx *sql.Tx) *Test {
-	return &Test{db.Manager.NewInterfaceDb(tx).Table("user")}
+	return &Test{db.Manager.NewInterfaceDb(tx).Table("user_invite")}
 }
 
 func main() {
@@ -37,11 +38,11 @@ func main() {
 		1: {"/admin/token/verify"},
 	}
 
-	//NewTest(nil).Field("id").AndWhere("parent_id in (0, 1)", nil).Query(func(rows *sql.Rows) {
-	//	var adminId int64
-	//	_ = rows.Scan(&adminId)
-	//	fmt.Println(adminId)
-	//})
+	_, err := NewTest(nil).Field("admin_id", "user_id", "code", "created_at").
+		Args(1, 0, "8888", time.Now().Unix()).Insert()
+	if err != nil {
+		panic(err)
+	}
 
 	//	启动监听
 	_ = app.Router.ServeFiles("assets").
