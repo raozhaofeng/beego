@@ -26,13 +26,19 @@ func InitializationLocales(rds redis.Conn, localesList map[int64]map[string]map[
 // SetAdminLocalesAll 设置管理所有语言
 func (c *Locales) SetAdminLocalesAll(rds redis.Conn, adminId int64, alias string, locales map[string]string) {
 	for key, val := range locales {
-		_, _ = rds.Do("HSET", c.LocalesRedisName(adminId, alias), key, val)
+		_, err := rds.Do("HSET", c.LocalesRedisName(adminId, alias), key, val)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
 // SetAdminLocales 设置管理语言
 func (c *Locales) SetAdminLocales(rds redis.Conn, adminId int64, alias string, localeKey string, localVal any) {
-	_, _ = rds.Do("HSET", c.LocalesRedisName(adminId, alias), localeKey, localVal)
+	_, err := rds.Do("HSET", c.LocalesRedisName(adminId, alias), localeKey, localVal)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetAdminLocales 获取管理语言值

@@ -62,14 +62,23 @@ func (c *Token) GetTokenParams(rds redis.Conn, tokenKey string) *TokenParams {
 		return nil
 	}
 	tokenParams := new(TokenParams)
-	_ = json.Unmarshal(tokenParamsBytes, &tokenParams)
+	err = json.Unmarshal(tokenParamsBytes, &tokenParams)
+	if err != nil {
+		panic(err)
+	}
 	return tokenParams
 }
 
 // SetTokenParams 设置Token参数
 func (c *Token) SetTokenParams(rds redis.Conn, tokenKey string, tokenParams *TokenParams) {
-	tokenParamsBytes, _ := json.Marshal(tokenParams)
-	_, _ = rds.Do("HSET", TokenParamsRedisName, tokenKey, tokenParamsBytes)
+	tokenParamsBytes, err := json.Marshal(tokenParams)
+	if err != nil {
+		panic(err)
+	}
+	_, err = rds.Do("HSET", TokenParamsRedisName, tokenKey, tokenParamsBytes)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetTokenValue 获取Token值
@@ -80,12 +89,18 @@ func (c *Token) GetTokenValue(rds redis.Conn, adminId, userId int64) string {
 
 // SetTokenValue 设置Token值
 func (c *Token) SetTokenValue(rds redis.Conn, adminId, userId int64, tokenStr string) {
-	_, _ = rds.Do("HSET", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId), tokenStr)
+	_, err := rds.Do("HSET", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId), tokenStr)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // DelTokenValue 删除Token值
 func (c *Token) DelTokenValue(rds redis.Conn, adminId, userId int64) {
-	_, _ = rds.Do("HDEL", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId))
+	_, err := rds.Do("HDEL", TokenValuesRedisName, c.GetTokenValueKey(adminId, userId))
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetTokenAdminRolesRouter 获取管理角色路由列表
@@ -99,7 +114,10 @@ func (c *Token) GetTokenAdminRolesRouter(rds redis.Conn, adminId int64) []string
 
 // SetTokenAdminRolesRouter 设置管理角色路由列表
 func (c *Token) SetTokenAdminRolesRouter(rds redis.Conn, adminId int64, rolesRouter []string) {
-	_, _ = rds.Do("HSET", TokenAdminRolesRouterName, adminId, strings.Join(rolesRouter, ","))
+	_, err := rds.Do("HSET", TokenAdminRolesRouterName, adminId, strings.Join(rolesRouter, ","))
+	if err != nil {
+		panic(err)
+	}
 }
 
 // AuthRouter 验证路由
