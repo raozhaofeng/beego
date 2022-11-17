@@ -78,8 +78,18 @@ func (c *FilterEmpty) DateTime(where string, value string, location *time.Locati
 // RangeTime 是否时间范围
 func (c *FilterEmpty) RangeTime(where string, rangeTime *RangeTimeParam, location *time.Location) *FilterEmpty {
 	if rangeTime != nil {
-		startTime, _ := time.ParseInLocation("2006/01/02 15:04:05", rangeTime.Form, location)
-		endTime, _ := time.ParseInLocation("2006/01/02 15:04:05", rangeTime.To, location)
+		var startTime, endTime time.Time
+		if len(rangeTime.Form) == 19 {
+			startTime, _ = time.ParseInLocation("2006/01/02 15:04:05", rangeTime.Form, location)
+		} else {
+			startTime, _ = time.ParseInLocation("2006/01/02", rangeTime.Form, location)
+		}
+
+		if len(rangeTime.To) == 19 {
+			endTime, _ = time.ParseInLocation("2006/01/02 15:04:05", rangeTime.To, location)
+		} else {
+			endTime, _ = time.ParseInLocation("2006/01/02", rangeTime.To, location)
+		}
 		c.Db.AndWhere(where, startTime.Unix(), endTime.Unix())
 	}
 	return c
