@@ -12,6 +12,9 @@ import (
 // Generate 生成Token
 func (c *Token) Generate(rds redis.Conn, tokenKey string, adminId, userId int64) string {
 	tokenParams := TokenManager.GetTokenParams(rds, tokenKey)
+	if tokenParams == nil {
+		return ""
+	}
 
 	nowTime := time.Now()
 	claims := &Claims{

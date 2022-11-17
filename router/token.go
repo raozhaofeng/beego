@@ -2,7 +2,6 @@ package router
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
 	"net/http"
@@ -106,9 +105,8 @@ func (c *Token) SetTokenAdminRolesRouter(rds redis.Conn, adminId int64, rolesRou
 // AuthRouter 验证路由
 func (c *Token) AuthRouter(rds redis.Conn, adminId int64, router string) bool {
 	adminRolesRouter := c.GetTokenAdminRolesRouter(rds, adminId)
-	fmt.Println(adminRolesRouter)
 	for _, adminRouter := range adminRolesRouter {
-		if router == adminRouter {
+		if router == adminRouter || adminRouter == "*" {
 			return true
 		}
 	}
