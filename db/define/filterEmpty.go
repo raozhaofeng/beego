@@ -1,6 +1,8 @@
 package define
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	OptUpdate = 1 //	更新操作
@@ -8,7 +10,7 @@ const (
 
 // RangeTimeParam 时间范围参数
 type RangeTimeParam struct {
-	Form string `json:"form"` //	开始时间
+	Form string `json:"from"` //	开始时间
 	To   string `json:"to"`   //	结束时间
 }
 

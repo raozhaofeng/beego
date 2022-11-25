@@ -26,6 +26,13 @@ func NewHandle(module, name, method, route string, controllerFunc ControllerFunc
 	}
 }
 
+// NewHomeHandle 前台路由
+func NewHomeHandle(module, name, method, route string, controllerFunc ControllerFunc, tokenAuth bool) *Handle {
+	return &Handle{
+		Module: module, Name: name, Method: method, Route: route, Controller: controllerFunc, RouteAuth: false, TokenAuth: tokenAuth,
+	}
+}
+
 // SetRouteHandle 设置路由函数
 func (c *Router) SetRouteHandle(routeHandle []*Handle) *Router {
 	for _, handle := range routeHandle {
