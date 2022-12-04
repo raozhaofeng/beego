@@ -115,6 +115,12 @@ func (_Ethereum *Ethereum) SetPrivateKey(privateStr string) *Ethereum {
 	return _Ethereum
 }
 
+// SetContract 设置合约
+func (_Ethereum *Ethereum) SetContract(address string) *Ethereum {
+	_Ethereum.contractInstance, _ = tokens.NewTokens(common.HexToAddress(address), _Ethereum.ethClient)
+	return _Ethereum
+}
+
 // GetAccountAuth 获取账号权限
 func (_Ethereum *Ethereum) GetAccountAuth() (*bind.TransactOpts, error) {
 	chainID, err := _Ethereum.ethClient.NetworkID(context.Background())
