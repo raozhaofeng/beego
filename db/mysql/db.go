@@ -101,13 +101,24 @@ func (c *Db) ColumnString() []string {
 
 // SqlQueryRow 单条数据查询
 func (c *Db) SqlQueryRow(s string, args []any, rowFn func(row *sql.Row)) {
-	row := c.db.QueryRow(s, args...)
+	var row *sql.Row
+	if c.tx != nil {
+		row = c.tx.QueryRow(s, args...)
+	} else {
+		row = c.db.QueryRow(s, args...)
+	}
 	rowFn(row)
 }
 
 // SqlQuery 多条数据查询
 func (c *Db) SqlQuery(s string, args []any, rowsFn func(rows *sql.Rows)) {
-	rows, err := c.db.Query(s, args...)
+	var rows *sql.Rows
+	var err error
+	if c.tx != nil {
+		rows, err = c.tx.Query(s, args...)
+	} else {
+		rows, err = c.db.Query(s, args...)
+	}
 	if err != nil {
 		panic(err)
 	}

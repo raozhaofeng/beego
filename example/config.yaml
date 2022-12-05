@@ -14,7 +14,7 @@ Database:
   Drive: "mysql"
   User: "root"
   Pass: "Aa123098.."
-  Dbname: "basic"
+  Dbname: "beego"
   Network: "tcp"
   Server: "localhost"
   Port: 3306

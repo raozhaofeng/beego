@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/raozhaofeng/beego/components/blockchain/tokens"
@@ -26,14 +27,19 @@ type Ethereum struct {
 	contractInstance *tokens.Tokens    //	合约实例
 }
 
-// TransactionReceiptStatus 查询交易hex状态
-func (_Ethereum *Ethereum) TransactionReceiptStatus(hex string) (uint64, error) {
-	transaction := common.HexToHash(hex)
-	receipt, err := _Ethereum.ethClient.TransactionReceipt(context.Background(), transaction)
+// TransactionByHash 查询交易hex状态
+func (_Ethereum *Ethereum) TransactionByHash(hashTxStr string) (*types.Transaction, bool) {
+	hashTx := common.HexToHash(hashTxStr)
+	tx, isPending, err := _Ethereum.ethClient.TransactionByHash(context.Background(), hashTx)
 	if err != nil {
-		return 0, err
+		return nil, true
 	}
-	return receipt.Status, nil
+	return tx, isPending
+}
+
+// TransactionAsMessage 获取哈希消息
+func (_Ethereum *Ethereum) TransactionAsMessage(tx *types.Transaction) (types.Message, error) {
+	return tx.AsMessage(types.NewEIP155Signer(big.NewInt(int64(1))), tx.GasPrice())
 }
 
 // TokenTransferFrom 合约授权转账
