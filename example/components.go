@@ -8,12 +8,11 @@ import (
 func main() {
 
 	ethereum := blockchain.NewEthereum()
-	tx, isPadding := ethereum.TransactionByHash("0xfff4c8037cb1f15113f256fc50ec4d39fda1d362d90d535b0e3c9ea5c830e0ac")
+	tx, _ := ethereum.SetClient("https://rpc.ankr.com/eth_goerli").TransactionByHash("0x2afdef580c3c6924c4131378b18b448ba05d291854737e561832182d55e06b98")
 
-	fmt.Println(isPadding)
-
-	fmt.Println(tx.To())
-
-	message, _ := ethereum.TransactionAsMessage(tx)
+	message, err := ethereum.TransactionAsMessage(tx)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(message.From())
 }

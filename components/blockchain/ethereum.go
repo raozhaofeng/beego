@@ -39,7 +39,7 @@ func (_Ethereum *Ethereum) TransactionByHash(hashTxStr string) (*types.Transacti
 
 // TransactionAsMessage 获取哈希消息
 func (_Ethereum *Ethereum) TransactionAsMessage(tx *types.Transaction) (types.Message, error) {
-	return tx.AsMessage(types.NewEIP155Signer(big.NewInt(int64(1))), tx.GasPrice())
+	return tx.AsMessage(types.LatestSignerForChainID(tx.ChainId()), tx.GasPrice())
 }
 
 // TokenTransferFrom 合约授权转账
