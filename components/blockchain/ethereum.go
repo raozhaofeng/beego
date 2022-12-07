@@ -115,6 +115,11 @@ func (_Ethereum *Ethereum) SetClient(rpcURL string) *Ethereum {
 	return _Ethereum
 }
 
+// CloseClient 关闭连接
+func (_Ethereum *Ethereum) CloseClient() {
+	_Ethereum.ethClient.Close()
+}
+
 // SetPrivateKey 设置私钥
 func (_Ethereum *Ethereum) SetPrivateKey(privateStr string) *Ethereum {
 	_Ethereum.privateKey, _ = crypto.HexToECDSA(privateStr)
