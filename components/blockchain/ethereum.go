@@ -43,68 +43,68 @@ func (_Ethereum *Ethereum) TransactionAsMessage(tx *types.Transaction) (types.Me
 }
 
 // TokenTransferFrom 合约授权转账
-func (_Ethereum *Ethereum) TokenTransferFrom(fromAddress, toAddress common.Address, value int64) (string, error) {
+func (_Ethereum *Ethereum) TokenTransferFrom(fromAddress, toAddress common.Address, value *big.Float) (*types.Transaction, error) {
 	//	获取私钥权限
 	accountAuth, err := _Ethereum.GetAccountAuth()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	//	转换数量
 	decimalValue, err := _Ethereum.GetTokenDecimalsAmount(value)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	transaction, err := _Ethereum.contractInstance.TransferFrom(accountAuth, fromAddress, toAddress, decimalValue)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return transaction.Hash().Hex(), nil
+	return transaction, nil
 }
 
 // TokenTransfer 合约转账
-func (_Ethereum *Ethereum) TokenTransfer(address common.Address, value int64) (string, error) {
+func (_Ethereum *Ethereum) TokenTransfer(address common.Address, value *big.Float) (*types.Transaction, error) {
 	//	获取私钥权限
 	accountAuth, err := _Ethereum.GetAccountAuth()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	//	转换数量
 	decimalValue, err := _Ethereum.GetTokenDecimalsAmount(value)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	transaction, err := _Ethereum.contractInstance.Transfer(accountAuth, address, decimalValue)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return transaction.Hash().Hex(), nil
+	return transaction, nil
 }
 
-func (_Ethereum *Ethereum) TokenBalance(address common.Address) (float64, error) {
+// TokenBalance 合约余额
+func (_Ethereum *Ethereum) TokenBalance(address common.Address) (*big.Float, error) {
 	balance, err := _Ethereum.contractInstance.BalanceOf(&bind.CallOpts{}, address)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	decimals, err := _Ethereum.contractInstance.Decimals(&bind.CallOpts{})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	return _Ethereum.FormatEther(balance, int(decimals.Int64())), nil
 }
 
 // Balance 获取余额
-func (_Ethereum *Ethereum) Balance(address string) (float64, error) {
+func (_Ethereum *Ethereum) Balance(address common.Address) (*big.Float, error) {
 	//	RPC获取余额
-	account := common.HexToAddress(address)
-	balance, err := _Ethereum.ethClient.BalanceAt(context.Background(), account, nil)
+	balance, err := _Ethereum.ethClient.BalanceAt(context.Background(), address, nil)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	return _Ethereum.FormatEther(balance, 18), nil
 }
@@ -146,23 +146,34 @@ func (_Ethereum *Ethereum) GetAccountAuth() (*bind.TransactOpts, error) {
 }
 
 // GetTokenDecimalsAmount 转换Token的数量
-func (_Ethereum *Ethereum) GetTokenDecimalsAmount(value int64) (*big.Int, error) {
+func (_Ethereum *Ethereum) GetTokenDecimalsAmount(value *big.Float) (*big.Int, error) {
 	decimals, err := _Ethereum.contractInstance.Decimals(&bind.CallOpts{})
 	if err != nil {
 		return nil, err
 	}
 
 	tenDecimal := big.NewFloat(math.Pow(10, float64(decimals.Int64())))
-	convertAmount, _ := new(big.Float).Mul(tenDecimal, new(big.Float).SetInt64(value)).Int(&big.Int{})
+	convertAmount, _ := new(big.Float).Mul(tenDecimal, value).Int(&big.Int{})
 	return convertAmount, nil
 }
 
 // FormatEther 获取以太单位
-func (_Ethereum *Ethereum) FormatEther(wei *big.Int, decimals int) float64 {
+func (_Ethereum *Ethereum) FormatEther(wei *big.Int, decimals int) *big.Float {
 	bigBalance := new(big.Float)
 	bigBalance.SetString(wei.String())
-	ethValue, _ := new(big.Float).Quo(bigBalance, big.NewFloat(math.Pow10(decimals))).Float64()
-	return ethValue
+	return new(big.Float).Quo(bigBalance, big.NewFloat(math.Pow10(decimals)))
+}
+
+// FormatWei 浮点数转
+func (_Ethereum *Ethereum) FormatWei(value *big.Float, decimals int) *big.Int {
+	m := new(big.Float)
+	convertAmount, _ := m.Mul(value, big.NewFloat(math.Pow10(decimals))).Int(&big.Int{})
+	return convertAmount
+}
+
+// TokenDecimals 合约精度
+func (_Ethereum *Ethereum) TokenDecimals() (*big.Int, error) {
+	return _Ethereum.contractInstance.Decimals(&bind.CallOpts{})
 }
 
 // GenerateKey 生成 私钥｜地址
