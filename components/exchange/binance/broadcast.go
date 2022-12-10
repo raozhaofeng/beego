@@ -2,11 +2,16 @@ package binance
 
 import (
 	"fmt"
+	"github.com/raozhaofeng/beego/components/exchange/interfaces"
 	"github.com/raozhaofeng/beego/utils"
 	"time"
 )
 
+// BroadcastMessageTypeTickerPrice 广播最新价格类型
 const BroadcastMessageTypeTickerPrice = "TickerPrice"
+
+// RealTimeTickerPrice 实时最新价格
+var RealTimeTickerPrice interfaces.Ticker
 
 // BroadcastService 广播服务
 var BroadcastService *Broadcast
@@ -27,8 +32,8 @@ func InitBroadcastService() {
 	}
 }
 
-// TickerPrice 广播最新价格
-func (c *Broadcast) TickerPrice(second time.Duration) {
+// SyncTickerPrice 同步最新价格
+func (c *Broadcast) SyncTickerPrice(second time.Duration) {
 	go func() {
 		for {
 			// 请求数据
@@ -40,6 +45,7 @@ func (c *Broadcast) TickerPrice(second time.Duration) {
 			}
 
 			// 发送消息
+			RealTimeTickerPrice = ticker
 			c.Service.Send(&utils.Message{
 				Type: BroadcastMessageTypeTickerPrice,
 				Data: ticker,

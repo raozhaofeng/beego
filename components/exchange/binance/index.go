@@ -10,7 +10,6 @@ import (
 	"github.com/raozhaofeng/beego/components/exchange/interfaces"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +21,9 @@ const BaseURL = "https://api.binance.com"
 const (
 	// TickerPriceURL 最新交易对价格列表路由
 	TickerPriceURL = "/api/v3/ticker/price"
+
+	// KlineURL k线路由
+	KlineURL = "/api/v3/klines"
 
 	// SpecificationURL 行情规范路由
 	SpecificationURL = "/api/v3/exchangeInfo"
@@ -154,12 +156,7 @@ func (c *Exchange) httpGet(uri string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	// 添加代理
-	proxyURL, _ := url.Parse("socks5://107.148.148.131:8001")
-	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
-		Proxy: http.ProxyURL(proxyURL),
-	}}
-
+	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -178,11 +175,7 @@ func (c *Exchange) httpPost(uri string, p map[string]interface{}) ([]byte, error
 		return nil, err
 	}
 
-	// 添加代理
-	proxyURL, _ := url.Parse("socks5://107.148.148.131:8001")
-	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
-		Proxy: http.ProxyURL(proxyURL),
-	}}
+	client := &http.Client{Timeout: 5 * time.Second}
 	req.Header.Add("X-MBX-APIKEY", c.conf.AppKey)
 	req.Header.Add("content-type", "application/x-www-form-urlencoded")
 	resp, err := client.Do(req)

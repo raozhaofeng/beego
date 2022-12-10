@@ -36,9 +36,6 @@ func InitBroadcastService() {
 		binance.InitBroadcastService()
 		// 启动广播
 		binance.BroadcastService.Service.Start()
-		// 广播监听1s最新价格
-		binance.BroadcastService.TickerPrice(1)
-		// 启动监听者
 	}
 
 	BroadcastServiceManageService = &BroadcastManage{}
