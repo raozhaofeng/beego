@@ -15,8 +15,8 @@ import (
 	"time"
 )
 
-// BaseURL 基础接口
-const BaseURL = "https://api.binance.com"
+// BaseURL 基础接口 - 美国币安接口
+const BaseURL = "https://api.binance.us"
 
 const (
 	// TickerPriceURL 最新交易对价格列表路由
