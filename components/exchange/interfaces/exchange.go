@@ -21,4 +21,10 @@ type Exchange interface {
 
 	// MarketSell 市价卖
 	MarketSell(symbol string, quantity float64) (Resp, error)
+
+	// SetProxy 设置代理
+	SetProxy(url string) Exchange
+
+	// SetBaseURL 设置基础地址
+	SetBaseURL(baseURL string) Exchange
 }

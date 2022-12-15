@@ -10,13 +10,14 @@ import (
 	"github.com/raozhaofeng/beego/components/exchange/interfaces"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
 )
 
 // BaseURL 基础接口 - 美国币安接口
-const BaseURL = "https://api.binance.us"
+const BaseURL = "https://api.binance.com"
 
 const (
 	// TickerPriceURL 最新交易对价格列表路由
@@ -43,13 +44,17 @@ type httpRespError struct {
 
 // Exchange 币安交易所
 type Exchange struct {
-	conf   interfaces.Conf //	配置文件
-	isTest bool            //	是否测试
+	baseURL  string          //	基础路由
+	conf     interfaces.Conf //	配置文件
+	proxyURL *url.URL        //	代理路由
+	isTest   bool            //	是否测试
 }
 
 // NewExchange 新建币安交易所模型
 func NewExchange() *Exchange {
-	return &Exchange{}
+	return &Exchange{
+		baseURL: BaseURL,
+	}
 }
 
 // Conf 配置交易所配置
@@ -152,11 +157,13 @@ func (c *Exchange) MarketSell(symbol string, quantity float64) (interfaces.Resp,
 
 // httpGet GET请求
 func (c *Exchange) httpGet(uri string) ([]byte, error) {
-	req, err := http.NewRequest("GET", BaseURL+uri, nil)
+	req, err := http.NewRequest("GET", c.baseURL+uri, nil)
 	if err != nil {
 		return nil, err
 	}
-	client := &http.Client{Timeout: 5 * time.Second}
+	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
+		Proxy: http.ProxyURL(c.proxyURL),
+	}}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -170,12 +177,14 @@ func (c *Exchange) httpPost(uri string, p map[string]interface{}) ([]byte, error
 	sha := c.sign(queryStr)
 	queryStr += "&signature=" + sha
 
-	req, err := http.NewRequest("POST", BaseURL+uri, strings.NewReader(queryStr))
+	req, err := http.NewRequest("POST", c.baseURL+uri, strings.NewReader(queryStr))
 	if err != nil {
 		return nil, err
 	}
 
-	client := &http.Client{Timeout: 5 * time.Second}
+	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
+		Proxy: http.ProxyURL(c.proxyURL),
+	}}
 	req.Header.Add("X-MBX-APIKEY", c.conf.AppKey)
 	req.Header.Add("content-type", "application/x-www-form-urlencoded")
 	resp, err := client.Do(req)
@@ -254,4 +263,16 @@ func (c *Exchange) filterMinQtyQuantity(symbol string, quantity float64) (float6
 
 	newQuantity, _ := strconv.ParseFloat(newQuantityStr, 64)
 	return newQuantity, nil
+}
+
+// SetProxy 设置代理地址
+func (c *Exchange) SetProxy(urlStr string) interfaces.Exchange {
+	c.proxyURL, _ = url.Parse(urlStr)
+	return c
+}
+
+// SetBaseURL 设置基础地址
+func (c *Exchange) SetBaseURL(urlStr string) interfaces.Exchange {
+	c.baseURL = urlStr
+	return c
 }
